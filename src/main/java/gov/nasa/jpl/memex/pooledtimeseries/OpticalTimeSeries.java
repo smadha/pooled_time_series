@@ -48,6 +48,7 @@ import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.mapred.TextInputFormat;
 import org.apache.hadoop.mapred.lib.MultipleTextOutputFormat;
 import org.opencv.core.Core;
+import org.opencv.highgui.Highgui;
 
 import com.google.common.io.Files;
 
@@ -70,6 +71,7 @@ public class OpticalTimeSeries {
                 
         	}
         	
+        	
             try {
             	Path videoPath = new Path(value.toString());
                 LOG.info("Reading video file from - " + videoPath);
@@ -80,23 +82,37 @@ public class OpticalTimeSeries {
     			FileSystem fs = FileSystem.get(URI.create(value.toString()), new Configuration());
     			
     			//Open the path mentioned in HDFS
-    			FSDataInputStream in = fs.open(videoPath);
+    			FSDataInputStream in ; OutputStream out ;
     			LOG.info("Copying video to a TempDir - "+  tempDir.getPath());
+    			LOG.info("Free Space - "+  tempDir.getFreeSpace()+" Total Space - "+  tempDir.getTotalSpace());
     			LOG.info("Available byte - " + in.available());
     			try{
-    				 OutputStream out = new FileOutputStream(tempDir.getAbsolutePath() + "/" + videoPath.getName() );
-    				 IOUtils.copyBytes(in, out,new Configuration() );
-
+    				in = fs.open(videoPath);
+    				out = new FileOutputStream(tempDir.getAbsolutePath() + "/" + videoPath.getName() );
+    				IOUtils.copyBytes(in, out,new Configuration() );
+    				 
     			}catch(Exception e){
 					LOG.log(Level.SEVERE, "Error while copying to TempDir", e);
     			}finally {
     				in.close();
+    				out.close();
 				}
     			LOG.info("Available videos - " + Arrays.asList(tempDir.listFiles()) );
+    			LOG.info("Free Space - "+  tempDir.getFreeSpace()+" Total Space - "+  tempDir.getTotalSpace());
     			
                 double[][] series1 = PoT.getOpticalTimeSeries(tempDir.listFiles()[0].toPath(), 5, 5, 8);
                 String ofVector = saveVectors(series1);
                 output.collect(value, new Text(ofVector));
+                
+                in = fs.open(new Path("/user/pts/output/smadha.jpg"));
+                out = new FileOutputStream(tempDir.getAbsolutePath() + "/smadha.jpg");
+				IOUtils.copyBytes(in, out,new Configuration() );
+				in.close();
+				out.close();
+				LOG.info("Available files - " + Arrays.asList(tempDir.listFiles()) );
+				LOG.info("Free Space - "+  tempDir.getFreeSpace()+" Total Space - "+  tempDir.getTotalSpace());
+                LOG.info("Col size - "+Highgui.imread(tempDir.getAbsolutePath() + "/smadha.jpg").cols());
+                
             } catch (Exception e) {
             	e.printStackTrace();
             	LOG.log(Level.SEVERE, "Exception while calling PoT.getOpticalTimeSeries", e);
