@@ -82,20 +82,21 @@ public class OpticalTimeSeries {
     			FileSystem fs = FileSystem.get(URI.create(value.toString()), new Configuration());
     			
     			//Open the path mentioned in HDFS
-    			FSDataInputStream in ; OutputStream out ;
+    			FSDataInputStream in = null; OutputStream out =null;
     			LOG.info("Copying video to a TempDir - "+  tempDir.getPath());
     			LOG.info("Free Space - "+  tempDir.getFreeSpace()+" Total Space - "+  tempDir.getTotalSpace());
-    			LOG.info("Available byte - " + in.available());
+    			
     			try{
     				in = fs.open(videoPath);
+    				LOG.info("Available byte - " + in.available());
     				out = new FileOutputStream(tempDir.getAbsolutePath() + "/" + videoPath.getName() );
     				IOUtils.copyBytes(in, out,new Configuration() );
     				 
     			}catch(Exception e){
 					LOG.log(Level.SEVERE, "Error while copying to TempDir", e);
     			}finally {
-    				in.close();
-    				out.close();
+    				try{in.close();
+    				out.close();}catch(Exception e){}
 				}
     			LOG.info("Available videos - " + Arrays.asList(tempDir.listFiles()) );
     			LOG.info("Free Space - "+  tempDir.getFreeSpace()+" Total Space - "+  tempDir.getTotalSpace());
