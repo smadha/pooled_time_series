@@ -20,6 +20,7 @@ package gov.nasa.jpl.memex.pooledtimeseries;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.apache.hadoop.conf.Configuration;
@@ -43,6 +44,7 @@ public class MeanChiSquareDistanceCalculation {
 	private static final Logger LOG = Logger.getLogger(MeanChiSquareDistanceCalculation.class.getName());
 	static int videos=0;
     public static class Map extends Mapper<LongWritable, Text, IntWritable, DoubleWritable> {
+    	private static java.util.Map<String, double[][]> seriesHolder = new HashMap<>();
     	
     	private InputStream getInputStreamFromHDFS(String pathToHDFS) throws IOException{
     		Path videoPath = new Path(pathToHDFS.toString());
@@ -66,9 +68,19 @@ public class MeanChiSquareDistanceCalculation {
             for (String video: videoPaths) {
                 ArrayList<double[][]> multiSeries = new ArrayList<double[][]>();
                 
-                multiSeries.add(PoT.loadTimeSeries(getInputStreamFromHDFS(video + ".of.txt")));
-                multiSeries.add(PoT.loadTimeSeries(getInputStreamFromHDFS(video + ".hog.txt")));
-                
+                if (seriesHolder.get(video + ".of.txt") == null) {
+					double[][] ofSeries = PoT.loadTimeSeries(getInputStreamFromHDFS(video + ".of.txt"));
+					double[][] ogSeries = PoT.loadTimeSeries(getInputStreamFromHDFS(video + ".hog.txt"));
+					
+					multiSeries.add(ofSeries);
+					multiSeries.add(ogSeries);
+					
+					seriesHolder.put(video + ".of.txt", ofSeries);
+					seriesHolder.put(video + ".hog.txt", ogSeries);
+				}else{
+					multiSeries.add(seriesHolder.get(video + ".of.txt"));
+					multiSeries.add(seriesHolder.get(video + ".og.txt"));
+				}
                 FeatureVector fv = new FeatureVector();
                 for (int i = 0; i < multiSeries.size(); i++) {
                     fv.feature.add(PoT.computeFeaturesFromSeries(multiSeries.get(i), tws, 1));
@@ -78,7 +90,7 @@ public class MeanChiSquareDistanceCalculation {
                 fvList.add(fv);
             }
             
-            LOG.info("Loaded Time Series for pair - " + value);
+            LOG.info("Loaded Time Series for pair in - " + (System.currentTimeMillis() - startTime));
 
             for (int i = 0; i < fvList.get(0).numDim(); i++) {
                 context.write(new IntWritable(i), new DoubleWritable(
