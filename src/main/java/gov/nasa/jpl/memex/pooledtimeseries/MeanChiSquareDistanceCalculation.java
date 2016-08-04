@@ -20,7 +20,7 @@ package gov.nasa.jpl.memex.pooledtimeseries;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.apache.hadoop.conf.Configuration;
@@ -44,16 +44,7 @@ public class MeanChiSquareDistanceCalculation {
 	private static final Logger LOG = Logger.getLogger(MeanChiSquareDistanceCalculation.class.getName());
 	static int videos=0;
     public static class Map extends Mapper<LongWritable, Text, IntWritable, DoubleWritable> {
-    	final static int MAX_ENTRIES = 1000;
-    	private static java.util.Map<String, double[][]> seriesHolder = 
-    			new LinkedHashMap<String, double[][]>(MAX_ENTRIES+1, .75F, true) {
-			private static final long serialVersionUID = 1L;
-
-			// This method is called just after a new entry has been added
-    	    public boolean removeEldestEntry(java.util.Map.Entry eldest) {
-    	        return size() > MAX_ENTRIES;
-    	    }
-    	};
+    	private static java.util.Map<String, double[][]> seriesHolder = new HashMap<>();
     	
     	private InputStream getInputStreamFromHDFS(String pathToHDFS) throws IOException{
     		Path videoPath = new Path(pathToHDFS.toString());
