@@ -69,7 +69,6 @@ public class MeanChiSquareDistanceCalculation {
                 ArrayList<double[][]> multiSeries = new ArrayList<double[][]>();
                 
                 if (seriesHolder.get(video + ".of.txt") == null) {
-                	LOG.info("Not found in cache, loading from file system");
 					double[][] ofSeries = PoT.loadTimeSeries(getInputStreamFromHDFS(video + ".of.txt"));
 					double[][] ogSeries = PoT.loadTimeSeries(getInputStreamFromHDFS(video + ".hog.txt"));
 					
@@ -79,9 +78,8 @@ public class MeanChiSquareDistanceCalculation {
 					seriesHolder.put(video + ".of.txt", ofSeries);
 					seriesHolder.put(video + ".hog.txt", ogSeries);
 				}else{
-					LOG.info("Loaded from cache");
 					multiSeries.add(seriesHolder.get(video + ".of.txt"));
-					multiSeries.add(seriesHolder.get(video + ".hog.txt"));
+					multiSeries.add(seriesHolder.get(video + ".og.txt"));
 				}
                 FeatureVector fv = new FeatureVector();
                 for (int i = 0; i < multiSeries.size(); i++) {
