@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -84,8 +85,10 @@ public class MeanChiSquareDistanceCalculation {
                 ArrayList<double[][]> multiSeries = new ArrayList<double[][]>();
                 String videoName = new File(video).getName();
                 
-                multiSeries.add(PoT.loadTimeSeries(new File("./video-metric-bak.tgz/video-metric-bak/" + videoName + ".of.txt").toPath()));
-                multiSeries.add(PoT.loadTimeSeries(new File("./video-metric-bak.tgz/video-metric-bak/" + videoName + ".hog.txt").toPath()));
+                multiSeries.add(PoT.loadTimeSeries(Paths.get(
+                		new File("./video-metric-bak.tgz/video-metric-bak/" + videoName + ".of.txt").getAbsolutePath() )));
+                multiSeries.add(PoT.loadTimeSeries(Paths.get(
+                		new File("./video-metric-bak.tgz/video-metric-bak/" + videoName + ".hog.txt").getAbsolutePath() )));
                 
                 FeatureVector fv = new FeatureVector();
                 for (int i = 0; i < multiSeries.size(); i++) {
