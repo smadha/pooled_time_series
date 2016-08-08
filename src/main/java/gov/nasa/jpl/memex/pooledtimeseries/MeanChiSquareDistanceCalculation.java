@@ -17,8 +17,10 @@
 
 package gov.nasa.jpl.memex.pooledtimeseries;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -43,7 +45,16 @@ public class MeanChiSquareDistanceCalculation {
 	private static final Logger LOG = Logger.getLogger(MeanChiSquareDistanceCalculation.class.getName());
 	static int videos=0;
     public static class Map extends Mapper<LongWritable, Text, IntWritable, DoubleWritable> {
-    	
+    	@Override
+    	protected void setup(Mapper<LongWritable, Text, IntWritable, DoubleWritable>.Context context)
+    			throws IOException, InterruptedException {
+    		super.setup(context);
+    		
+    		File f = new File("./video-metric-bak.tar");
+    		System.out.println("Setup Exists - " + f.exists());
+    		System.out.println("Setup Dir - " + f.isDirectory());
+    		System.out.println("Setup path - " + f.getAbsolutePath());
+    	}
     	private InputStream getInputStreamFromHDFS(String pathToHDFS) throws IOException{
     		Path videoPath = new Path(pathToHDFS.toString());
     		return videoPath.getFileSystem(new Configuration()).open(videoPath);
@@ -66,6 +77,11 @@ public class MeanChiSquareDistanceCalculation {
             for (String video: videoPaths) {
                 ArrayList<double[][]> multiSeries = new ArrayList<double[][]>();
                 
+                File f = new File("./video-metric-bak.tar/" + video + ".of.txt");
+        		System.out.println("Exists - " + f.exists());
+        		System.out.println("Dir - " + f.isDirectory());
+        		System.out.println("Path - " + f.getAbsolutePath());
+        		
                 multiSeries.add(PoT.loadTimeSeries(getInputStreamFromHDFS(video + ".of.txt")));
                 multiSeries.add(PoT.loadTimeSeries(getInputStreamFromHDFS(video + ".hog.txt")));
                 
@@ -89,7 +105,7 @@ public class MeanChiSquareDistanceCalculation {
                 ));
             }
             
-            LOG.info("Complated processing pair - " + value);
+            LOG.info("Completed processing pair - " + value);
             LOG.info("Time taken to complete job - " + (System.currentTimeMillis() - startTime));
         }
     }
@@ -144,6 +160,13 @@ public class MeanChiSquareDistanceCalculation {
         job.setReducerClass(Reduce.class);
 
         job.waitForCompletion(true);
+        System.out.println("Caching video-metric-bak.tar");
+        job.addCacheArchive(new URI("/user/pts/video-metric-bak.tgz"));
+        URI[] cacheFiles= job.getCacheFiles();
+        if(cacheFiles != null && cacheFiles.length > 0) {
+            System.out.println("Cache file ->" + cacheFiles[0]);
+        }
+        System.out.println("Cached video-metric-bak.tar");
     }
 }
 
