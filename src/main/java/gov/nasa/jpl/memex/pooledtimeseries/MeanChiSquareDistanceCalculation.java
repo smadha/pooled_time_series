@@ -50,7 +50,7 @@ public class MeanChiSquareDistanceCalculation {
     			throws IOException, InterruptedException {
     		super.setup(context);
     		
-    		File f = new File("./video-metric-bak.tgz");
+    		File f = new File("./video-metric-bak.tgz/video-metric-bak");
     		System.out.println("Setup Exists - " + f.exists());
     		System.out.println("Setup Dir - " + f.isDirectory());
     		System.out.println("Setup path - " + f.getAbsolutePath());
@@ -84,7 +84,7 @@ public class MeanChiSquareDistanceCalculation {
                 ArrayList<double[][]> multiSeries = new ArrayList<double[][]>();
                 String videoName = new File(video).getName();
                 
-                File f = new File("./video-metric-bak.tgz/" + videoName + ".of.txt");
+                File f = new File("./video-metric-bak.tgz/video-metric-bak/" + videoName + ".of.txt");
         		System.out.println("Exists - " + f.exists());
         		System.out.println("Dir - " + f.isDirectory());
         		System.out.println("Path - " + f.getAbsolutePath());
