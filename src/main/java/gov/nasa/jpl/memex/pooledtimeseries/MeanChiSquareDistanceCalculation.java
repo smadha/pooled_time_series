@@ -54,6 +54,12 @@ public class MeanChiSquareDistanceCalculation {
     		System.out.println("Setup Exists - " + f.exists());
     		System.out.println("Setup Dir - " + f.isDirectory());
     		System.out.println("Setup path - " + f.getAbsolutePath());
+    		File[] fName = f.listFiles();
+			if (fName != null && fName.length > 0) {
+				for (int i = 0; i < fName.length && i < 11; i++) {
+					System.out.println("Cache file ->" + fName[i]);
+				}
+    		}
     	}
     	private InputStream getInputStreamFromHDFS(String pathToHDFS) throws IOException{
     		Path videoPath = new Path(pathToHDFS.toString());
@@ -79,6 +85,11 @@ public class MeanChiSquareDistanceCalculation {
                 String videoName = new File(video).getName();
                 
                 File f = new File("./video-metric-bak.tgz/" + videoName + ".of.txt");
+        		System.out.println("Exists - " + f.exists());
+        		System.out.println("Dir - " + f.isDirectory());
+        		System.out.println("Path - " + f.getAbsolutePath());
+        		
+        		f = new File("./video-metric-bak.tgz");
         		System.out.println("Exists - " + f.exists());
         		System.out.println("Dir - " + f.isDirectory());
         		System.out.println("Path - " + f.getAbsolutePath());
