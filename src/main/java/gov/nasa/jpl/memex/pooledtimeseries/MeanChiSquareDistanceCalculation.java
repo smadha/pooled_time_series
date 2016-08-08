@@ -84,18 +84,8 @@ public class MeanChiSquareDistanceCalculation {
                 ArrayList<double[][]> multiSeries = new ArrayList<double[][]>();
                 String videoName = new File(video).getName();
                 
-                File f = new File("./video-metric-bak.tgz/video-metric-bak/" + videoName + ".of.txt");
-        		System.out.println("Exists - " + f.exists());
-        		System.out.println("Dir - " + f.isDirectory());
-        		System.out.println("Path - " + f.getAbsolutePath());
-        		
-        		f = new File("./video-metric-bak.tgz");
-        		System.out.println("Exists - " + f.exists());
-        		System.out.println("Dir - " + f.isDirectory());
-        		System.out.println("Path - " + f.getAbsolutePath());
-        		
-                multiSeries.add(PoT.loadTimeSeries(getInputStreamFromHDFS(video + ".of.txt")));
-                multiSeries.add(PoT.loadTimeSeries(getInputStreamFromHDFS(video + ".hog.txt")));
+                multiSeries.add(PoT.loadTimeSeries(new File("./video-metric-bak.tgz/video-metric-bak/" + videoName + ".of.txt").toPath()));
+                multiSeries.add(PoT.loadTimeSeries(new File("./video-metric-bak.tgz/video-metric-bak/" + videoName + ".hog.txt").toPath()));
                 
                 FeatureVector fv = new FeatureVector();
                 for (int i = 0; i < multiSeries.size(); i++) {
