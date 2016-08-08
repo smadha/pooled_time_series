@@ -76,8 +76,9 @@ public class MeanChiSquareDistanceCalculation {
 
             for (String video: videoPaths) {
                 ArrayList<double[][]> multiSeries = new ArrayList<double[][]>();
+                String videoName = new File(video).getName();
                 
-                File f = new File("./video-metric-bak.tgz/" + video + ".of.txt");
+                File f = new File("./video-metric-bak.tgz/" + videoName + ".of.txt");
         		System.out.println("Exists - " + f.exists());
         		System.out.println("Dir - " + f.isDirectory());
         		System.out.println("Path - " + f.getAbsolutePath());
