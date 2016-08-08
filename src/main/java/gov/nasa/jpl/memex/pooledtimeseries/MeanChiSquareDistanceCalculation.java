@@ -50,7 +50,7 @@ public class MeanChiSquareDistanceCalculation {
     			throws IOException, InterruptedException {
     		super.setup(context);
     		
-    		File f = new File("./video-metric-bak.tar");
+    		File f = new File("./video-metric-bak.tgz");
     		System.out.println("Setup Exists - " + f.exists());
     		System.out.println("Setup Dir - " + f.isDirectory());
     		System.out.println("Setup path - " + f.getAbsolutePath());
@@ -77,7 +77,7 @@ public class MeanChiSquareDistanceCalculation {
             for (String video: videoPaths) {
                 ArrayList<double[][]> multiSeries = new ArrayList<double[][]>();
                 
-                File f = new File("./video-metric-bak.tar/" + video + ".of.txt");
+                File f = new File("./video-metric-bak.tgz/" + video + ".of.txt");
         		System.out.println("Exists - " + f.exists());
         		System.out.println("Dir - " + f.isDirectory());
         		System.out.println("Path - " + f.getAbsolutePath());
@@ -144,13 +144,13 @@ public class MeanChiSquareDistanceCalculation {
 	System.out.println("Track:" + baseConf.get("mapred.job.tracker"));
         System.out.println("Job Name"+job.getJobName());
         System.out.println(baseConf.get("mapreduce.job.maps"));
-        System.out.println("Caching video-metric-bak.tar");
+        System.out.println("Caching video-metric-bak.tgz");
         job.addCacheArchive(new URI("/user/pts/video-metric-bak.tgz"));
         URI[] cacheFiles= job.getCacheFiles();
         if(cacheFiles != null && cacheFiles.length > 0) {
             System.out.println("Cache file ->" + cacheFiles[0]);
         }
-        System.out.println("Cached video-metric-bak.tar");
+        System.out.println("Cached video-metric-bak.tgz");
         
         job.setMapOutputKeyClass(IntWritable.class);
         job.setMapOutputValueClass(DoubleWritable.class);
