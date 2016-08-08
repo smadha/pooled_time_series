@@ -144,7 +144,14 @@ public class MeanChiSquareDistanceCalculation {
 	System.out.println("Track:" + baseConf.get("mapred.job.tracker"));
         System.out.println("Job Name"+job.getJobName());
         System.out.println(baseConf.get("mapreduce.job.maps"));
-
+        System.out.println("Caching video-metric-bak.tar");
+        job.addCacheArchive(new URI("/user/pts/video-metric-bak.tgz"));
+        URI[] cacheFiles= job.getCacheFiles();
+        if(cacheFiles != null && cacheFiles.length > 0) {
+            System.out.println("Cache file ->" + cacheFiles[0]);
+        }
+        System.out.println("Cached video-metric-bak.tar");
+        
         job.setMapOutputKeyClass(IntWritable.class);
         job.setMapOutputValueClass(DoubleWritable.class);
         job.setOutputKeyClass(IntWritable.class);
@@ -160,13 +167,7 @@ public class MeanChiSquareDistanceCalculation {
         job.setReducerClass(Reduce.class);
 
         job.waitForCompletion(true);
-        System.out.println("Caching video-metric-bak.tar");
-        job.addCacheArchive(new URI("/user/pts/video-metric-bak.tgz"));
-        URI[] cacheFiles= job.getCacheFiles();
-        if(cacheFiles != null && cacheFiles.length > 0) {
-            System.out.println("Cache file ->" + cacheFiles[0]);
-        }
-        System.out.println("Cached video-metric-bak.tar");
+        
     }
 }
 
